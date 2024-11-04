@@ -2,6 +2,7 @@ import requests
 import configparser
 import json
 import pandas as pd
+from tabulate import tabulate
 
 
 
@@ -87,7 +88,12 @@ def correction(league_table,config):
     df_correction['correction']=df_correction['correction'].astype(int)
     league_table['pre_league']=df_correction['correction']
 
+    
+
     league_table['score'] = (league_table['win'] - league_table['lose'] + league_table['pre_league']) * 25 + 1000
+    league_table = league_table.round(0)
+    x=json.loads(config['settings']['table_order'])
+    league_table = league_table[x]
 
     return league_table
 
@@ -114,7 +120,8 @@ def main():
 
     league_table=correction(league_table,config)
 
-    print(league_table.sort_values(by='score', ascending=False))    
+
+    print(tabulate(league_table.sort_values(by='score', ascending=False), headers='keys', tablefmt='fancy_grid'))  
 
 if __name__ == "__main__":
     main()
