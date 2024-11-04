@@ -54,6 +54,14 @@ def get_match_history(raw_matches_details_list,config):
     return match_history
 
 
+def twin_merger(config,df):
+    twins = json.loads(config['settings']['twins'])
+    df = df.fillna("None")
+    df['personaname'] = df['personaname'].map(lambda x: twins.get(x, x))
+
+    return df
+
+
 
 def create_league_table(data,config):
     league_table=pd.DataFrame()
@@ -62,7 +70,11 @@ def create_league_table(data,config):
     for match in data:
         df_temp = pd.DataFrame(match['players'])
         league_table = pd.concat([league_table, df_temp], ignore_index=True)
+    
 
+
+    league_table = twin_merger(config,league_table)
+    
     league_table = league_table.groupby('personaname').agg(agg_funcs)
 
 
@@ -93,13 +105,14 @@ def main():
     raw_matches_details_list=get_matches_details_list(matches_list)
 
     #player_list=get_player_list(raw_matches_details_list)
+    #print(player_list)
 
 
     data=get_match_history(raw_matches_details_list,config)
 
     league_table=create_league_table(data,config)
 
-    x=correction(league_table,config)
+    league_table=correction(league_table,config)
 
     print(league_table.sort_values(by='score', ascending=False))    
 
