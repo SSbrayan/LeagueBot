@@ -110,8 +110,8 @@ def main():
 
     raw_matches_details_list=get_matches_details_list(matches_list)
 
-    #player_list=get_player_list(raw_matches_details_list)
-    #print(player_list)
+    player_list=get_player_list(raw_matches_details_list)
+    print(player_list)
 
 
     data=get_match_history(raw_matches_details_list,config)
